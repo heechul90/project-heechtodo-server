@@ -21,7 +21,7 @@ public class Todo {
     private String title;
 
     @Column(name = "todo_order", nullable = false)
-    private Long order;
+    private int order;
 
     @Column(nullable = false)
     private Boolean completed;
@@ -31,10 +31,10 @@ public class Todo {
      * todo Entity 생성
      */
     @Builder(builderMethodName = "createTodoBuilder", builderClassName = "createTodoBuilder")
-    public Todo(String title, Long order, Boolean completed) {
+    public Todo(String title, int order) {
         this.title = title;
         this.order = order;
-        this.completed = completed;
+        this.completed = false;
     }
 
     /**

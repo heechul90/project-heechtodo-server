@@ -1,5 +1,6 @@
 package heech.server.heechtodo.core.common.exception;
 
+import heech.server.heechtodo.core.common.json.Error;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
