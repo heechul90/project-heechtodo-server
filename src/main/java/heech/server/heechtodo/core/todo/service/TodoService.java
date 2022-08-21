@@ -39,6 +39,7 @@ public class TodoService {
     /**
      * todo 저장
      */
+    @Transactional
     public Todo saveTodo(Todo todo) {
         Todo savedTodo = todoRepository.save(todo);
         return savedTodo;
@@ -47,6 +48,7 @@ public class TodoService {
     /**
      * todo 수정
      */
+    @Transactional
     public void updateTodo(Long todoId, UpdateTodoParam param) {
         Todo findTodo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new NoSuchElementException());
@@ -58,6 +60,7 @@ public class TodoService {
     /**
      * todo 삭제
      */
+    @Transactional
     public void deleteTodo(Long todoId) {
         Todo findTodo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new NoSuchElementException());
