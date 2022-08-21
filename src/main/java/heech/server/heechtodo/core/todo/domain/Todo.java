@@ -42,6 +42,8 @@ public class Todo {
      */
     @Builder(builderMethodName = "updateTodoBuilder", builderClassName = "updateTodoBuilder")
     public void updateTodo(UpdateTodoParam param) {
-
+        this.title = param.getTitle();
+        this.order = param.getOrder();
+        this.completed = param.isCompleted();
     }
 }

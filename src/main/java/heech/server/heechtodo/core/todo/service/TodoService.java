@@ -1,11 +1,13 @@
 package heech.server.heechtodo.core.todo.service;
 
+import heech.server.heechtodo.core.common.exception.EntityNotFound;
 import heech.server.heechtodo.core.todo.domain.Todo;
 import heech.server.heechtodo.core.todo.dto.TodoSearchCondition;
 import heech.server.heechtodo.core.todo.dto.UpdateTodoParam;
 import heech.server.heechtodo.core.todo.repository.TodoQueryRepository;
 import heech.server.heechtodo.core.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.NoSuchElementException;
 @Transactional(readOnly = true)
 public class TodoService {
 
+    public static final String ENTITY_NAME = "todo";
     private final TodoRepository todoRepository;
     private final TodoQueryRepository todoQueryRepository;
 
@@ -33,7 +36,7 @@ public class TodoService {
      */
     public Todo findTodo(Long todoId) {
         return todoRepository.findById(todoId)
-                .orElseThrow(() -> new NoSuchElementException());
+                .orElseThrow(() -> new EntityNotFound(ENTITY_NAME, todoId));
     }
 
     /**
@@ -51,7 +54,7 @@ public class TodoService {
     @Transactional
     public void updateTodo(Long todoId, UpdateTodoParam param) {
         Todo findTodo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new NoSuchElementException());
+                .orElseThrow(() -> new EntityNotFound(ENTITY_NAME, todoId));
         findTodo.updateTodoBuilder()
                 .param(param)
                 .build();
@@ -63,7 +66,7 @@ public class TodoService {
     @Transactional
     public void deleteTodo(Long todoId) {
         Todo findTodo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new NoSuchElementException());
+                .orElseThrow(() -> new EntityNotFound(ENTITY_NAME, todoId));
         todoRepository.delete(findTodo);
     }
 }

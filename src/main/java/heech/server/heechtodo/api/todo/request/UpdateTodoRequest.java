@@ -2,7 +2,7 @@ package heech.server.heechtodo.api.todo.request;
 
 import heech.server.heechtodo.core.common.exception.JsonInvalidRequest;
 import heech.server.heechtodo.core.common.json.Error;
-import heech.server.heechtodo.core.todo.domain.Todo;
+import heech.server.heechtodo.core.todo.dto.UpdateTodoParam;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CreateTodoRequest {
+public class UpdateTodoRequest {
 
     @NotBlank
     private String title;
@@ -24,13 +24,17 @@ public class CreateTodoRequest {
     @PositiveOrZero
     private int order;
 
-    public Todo toEntity() {
-        return Todo.createTodoBuilder()
+    private boolean completed;
+
+    public UpdateTodoParam toUpdateTodoParam() {
+        return UpdateTodoParam.builder()
                 .title(this.title)
                 .order(this.order)
+                .completed(this.completed)
                 .build();
     }
 
+    //validate check
     public void validate() {
         List<Error> errors = new ArrayList<>();
 

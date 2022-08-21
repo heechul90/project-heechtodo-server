@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CreateTodoResponse {
+public class UpdateTodoResponse {
 
     private Long todoId;
     private String todoTitle;
@@ -17,7 +17,7 @@ public class CreateTodoResponse {
     private Boolean completed;
     private String url;
 
-    public CreateTodoResponse(Todo todo) {
+    public UpdateTodoResponse(Todo todo) {
         this.todoId = todo.getId();
         this.todoTitle = todo.getTitle();
         this.order = todo.getOrder();
