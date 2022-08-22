@@ -1,8 +1,10 @@
 package heech.server.heechtodo.core.todo.service;
 
 import heech.server.heechtodo.core.common.dto.SearchCondition;
+import heech.server.heechtodo.core.common.exception.EntityNotFound;
 import heech.server.heechtodo.core.todo.domain.Todo;
 import heech.server.heechtodo.core.todo.dto.TodoSearchCondition;
+import heech.server.heechtodo.core.todo.dto.UpdateTodoParam;
 import heech.server.heechtodo.core.todo.repository.TodoQueryRepository;
 import heech.server.heechtodo.core.todo.repository.TodoRepository;
 import org.assertj.core.api.Assertions;
@@ -29,8 +31,17 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class TodoServiceTest {
 
+    //SAVE_TODO_DATA
     public static final String TITLE = "test_title";
     public static final int ORDER = 0;
+
+    //UPDATE_TODO_DATA
+    public static final String UPDATE_TITLE = "update_title";
+    public static final int UPDATE_ORDER = 1;
+    public static final boolean UPDATE_COMPLETED = true;
+
+    //VALIDATION_MESSAGE
+    public static final String HAS_MESSAGE_STARTING_WITH = "존재하지 않는 Todo";
 
     private Todo getTodo(String title, int order) {
         return Todo.createTodoBuilder()
@@ -114,7 +125,30 @@ class TodoServiceTest {
     @Test
     @DisplayName(value = "todo 수정")
     void updateTodo() {
+        //given
+        Todo todo = getTodo(TITLE, ORDER);
+        given(todoRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(todo));
 
+        UpdateTodoParam param = UpdateTodoParam.builder()
+                .title(UPDATE_TITLE)
+                .order(UPDATE_ORDER)
+                .completed(UPDATE_COMPLETED)
+                .build();
+
+        //when
+        todoService.updateTodo(any(Long.class), param);
+
+        //then
+        assertThatThrownBy(() -> todoService.updateTodo(todo.getId(), param))
+                .isInstanceOf(EntityNotFound.class)
+                .hasMessageStartingWith(HAS_MESSAGE_STARTING_WITH)
+                .hasMessageContaining("id = " + todo.getId());
+        assertThat(todo.getTitle()).isEqualTo(UPDATE_TITLE);
+        assertThat(todo.getOrder()).isEqualTo(UPDATE_ORDER);
+        assertThat(todo.getCompleted()).isTrue();
+
+        //verify
+        verify(todoRepository, times(1)).findById(any(Long.class));
     }
 
     @Test

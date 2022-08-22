@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
 @Transactional(readOnly = true)
 public class TodoService {
 
-    public static final String ENTITY_NAME = "todo";
+    public static final String ENTITY_NAME = "Todo";
     private final TodoRepository todoRepository;
     private final TodoQueryRepository todoQueryRepository;
 
