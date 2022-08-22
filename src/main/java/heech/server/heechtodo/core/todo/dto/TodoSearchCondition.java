@@ -1,4 +1,11 @@
 package heech.server.heechtodo.core.todo.dto;
 
-public class TodoSearchCondition {
+import heech.server.heechtodo.core.common.dto.CommonSearchCondition;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class TodoSearchCondition extends CommonSearchCondition {
+
 }
