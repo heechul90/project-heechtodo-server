@@ -93,14 +93,32 @@ class TodoServiceTest {
     }
 
     @Test
+    @DisplayName(value = "todo 저장")
     void saveTodo() {
+        //given
+        Todo todo = getTodo(TITLE, ORDER);
+        given(todoRepository.save(any())).willReturn(todo);
+
+        //when
+        Todo savedTodo = todoService.saveTodo(todo);
+
+        //then
+        assertThat(savedTodo.getTitle()).isEqualTo(TITLE);
+        assertThat(savedTodo.getOrder()).isEqualTo(ORDER);
+        assertThat(savedTodo.getCompleted()).isFalse();
+
+        //verify
+        verify(todoRepository, times(1)).save(todo);
     }
 
     @Test
+    @DisplayName(value = "todo 수정")
     void updateTodo() {
+
     }
 
     @Test
+    @DisplayName(value = "todo 삭제")
     void deleteTodo() {
     }
 }
