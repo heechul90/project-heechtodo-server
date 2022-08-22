@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -73,7 +74,22 @@ class TodoServiceTest {
     }
 
     @Test
+    @DisplayName(value = "todo 단건 조회")
     void findTodo() {
+        //given
+        Todo todo = getTodo(TITLE, ORDER);
+        given(todoRepository.findById(any())).willReturn(Optional.ofNullable(todo));
+
+        //when
+        Todo findTodo = todoService.findTodo(any());
+
+        //then
+        assertThat(findTodo.getTitle()).isEqualTo(TITLE);
+        assertThat(findTodo.getOrder()).isEqualTo(0);
+        assertThat(findTodo.getCompleted()).isFalse();
+
+        //verify
+        verify(todoRepository, times(1)).findById(any());
     }
 
     @Test
