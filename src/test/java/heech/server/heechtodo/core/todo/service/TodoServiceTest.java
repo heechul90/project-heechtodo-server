@@ -7,7 +7,6 @@ import heech.server.heechtodo.core.todo.dto.TodoSearchCondition;
 import heech.server.heechtodo.core.todo.dto.UpdateTodoParam;
 import heech.server.heechtodo.core.todo.repository.TodoQueryRepository;
 import heech.server.heechtodo.core.todo.repository.TodoRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -154,5 +154,21 @@ class TodoServiceTest {
     @Test
     @DisplayName(value = "todo 삭제")
     void deleteTodo() {
+        //given
+        Todo todo = getTodo(TITLE, ORDER);
+        given(todoRepository.findById(any(Long.class))).willReturn(Optional.ofNullable(todo));
+
+        //when
+        todoService.deleteTodo(any(Long.class));
+
+        //then
+        assertThatThrownBy(() -> todoService.deleteTodo(todo.getId()))
+                .isInstanceOf(EntityNotFound.class)
+                .hasMessageStartingWith(HAS_MESSAGE_STARTING_WITH)
+                .hasMessageContaining("id = " + todo.getId());
+
+        //verify
+        verify(todoRepository, times(1)).findById(any(Long.class));
+        verify(todoRepository, times(1)).delete(any(Todo.class));
     }
 }
