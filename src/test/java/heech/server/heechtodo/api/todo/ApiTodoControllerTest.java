@@ -1,6 +1,7 @@
 package heech.server.heechtodo.api.todo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import heech.server.heechtodo.api.todo.request.CreateTodoRequest;
 import heech.server.heechtodo.core.common.dto.SearchCondition;
 import heech.server.heechtodo.core.todo.domain.Todo;
 import heech.server.heechtodo.core.todo.dto.TodoSearchCondition;
@@ -44,6 +45,7 @@ class ApiTodoControllerTest {
     public static final String HAS_MESSAGE_STARTING_WITH = "존재하지 않는 Todo";
     public static final String API_FIND_TODOS = "/api/todos";
     public static final String API_FIND_TODO = "/api/todos/{id}";
+    public static final String API_SAVE_TODO = "/api/todos";
 
     @Autowired private MockMvc mockMvc;
 
@@ -120,7 +122,33 @@ class ApiTodoControllerTest {
 
     @Test
     @DisplayName(value = "todo 저장")
-    void saveTodo() {
+    void saveTodo() throws Exception {
+        //given
+        Todo todo = getTodo(TITLE, ORDER);
+        given(todoService.saveTodo(any())).willReturn(todo);
+
+        CreateTodoRequest request = new CreateTodoRequest();
+        request.setTitle(TITLE);
+        request.setOrder(ORDER);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(API_SAVE_TODO)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        );
+
+        //then
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(HttpStatus.OK.getReasonPhrase()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.todoId").hasJsonPath())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.todoTitle").value(TITLE))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.order").value(ORDER))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.completed").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.url").value("http://localhost:9002" + API_FIND_TODOS + "/null"))
+                .andDo(MockMvcResultHandlers.print());
+
+        //verify
+        verify(todoService, times(1)).saveTodo(any());
     }
 
     @Test
