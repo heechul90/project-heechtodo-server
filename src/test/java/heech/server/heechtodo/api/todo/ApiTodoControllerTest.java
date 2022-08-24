@@ -1,7 +1,9 @@
 package heech.server.heechtodo.api.todo;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import heech.server.heechtodo.api.todo.request.CreateTodoRequest;
+import heech.server.heechtodo.api.todo.request.UpdateTodoRequest;
 import heech.server.heechtodo.core.common.dto.SearchCondition;
 import heech.server.heechtodo.core.todo.domain.Todo;
 import heech.server.heechtodo.core.todo.dto.TodoSearchCondition;
@@ -153,11 +155,43 @@ class ApiTodoControllerTest {
 
     @Test
     @DisplayName(value = "todo 수정")
-    void updateTodo() {
+    void updateTodo() throws Exception {
+        //given
+        Todo todo = getTodo(TITLE, ORDER);
+        given(todoService.findTodo(any())).willReturn(todo);
+
+        UpdateTodoRequest request = new UpdateTodoRequest();
+        request.setTitle(UPDATE_TITLE);
+        request.setOrder(UPDATE_ORDER);
+        request.setCompleted(UPDATE_COMPLETED);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put("/api/todos/{id}", 0L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        );
+
+        //then
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(HttpStatus.OK.getReasonPhrase()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.todoId").hasJsonPath())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").exists())
+                .andDo(MockMvcResultHandlers.print());
+
+        //verify
+        verify(todoService, times(1)).updateTodo(any(), any());
+        verify(todoService, times(1)).findTodo(any());
     }
 
     @Test
     @DisplayName(value = "todo 삭제")
     void deleteTodo() {
+        //given
+
+        //when
+
+        //then
+
+        //verify
     }
 }
