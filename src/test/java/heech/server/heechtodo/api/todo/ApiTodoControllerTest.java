@@ -185,13 +185,20 @@ class ApiTodoControllerTest {
 
     @Test
     @DisplayName(value = "todo 삭제")
-    void deleteTodo() {
+    void deleteTodo() throws Exception {
         //given
+        Todo todo = getTodo(TITLE, ORDER);
 
         //when
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.delete("/api/todos/{id}", 0L)
+                .contentType(MediaType.APPLICATION_JSON)
+        );
 
         //then
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(MockMvcResultHandlers.print());
 
         //verify
+        verify(todoService, times(1)).deleteTodo(any());
     }
 }
